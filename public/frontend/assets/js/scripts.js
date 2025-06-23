@@ -361,14 +361,40 @@ function initTestimonials() {
             crossFade: true
         },
         speed: 800,
+        // Add this to prevent height jumping
+        autoHeight: false,
+        // Disable these animations that might cause the "coming from down" effect
+        watchSlidesProgress: false,
+        watchSlidesVisibility: false,
         on: {
+            init: function() {
+                // Remove any animation classes from all slides on init
+                const slides = this.slides;
+                slides.forEach(slide => {
+                    const singleArea = slide.querySelector('.single-area');
+                    if (singleArea) {
+                        singleArea.style.animation = 'none';
+                        singleArea.classList.remove('animscroll-animate');
+                    }
+                });
+            },
             slideChange: function() {
                 // Clear any existing timers when slide changes manually
                 if (autoplayTimer) {
                     clearTimeout(autoplayTimer);
                 }
                 
-                // Add slide change animation
+                // Remove animation classes from all slides
+                const slides = this.slides;
+                slides.forEach(slide => {
+                    const singleArea = slide.querySelector('.single-area');
+                    if (singleArea) {
+                        singleArea.style.animation = 'none';
+                        singleArea.classList.remove('animscroll-animate');
+                    }
+                });
+                
+                // Add slide change animation for quote only
                 const activeSlide = this.slides[this.activeIndex];
                 const quote = activeSlide.querySelector('.fa-quote-left');
                 if (quote) {
@@ -395,7 +421,6 @@ function initTestimonials() {
             }
         }
     });
-
     // Initialize testimonial images carousel
     // testimonialImagesSwiper = new Swiper('.testimonial-images-carousel', {
     //     slidesPerView: 1,
